@@ -9,7 +9,8 @@ import {
   LOAD_ARTICLE_COMMENTS,
   START,
   SUCCESS,
-  FAIL
+  FAIL,
+  LOAD_ALL_COMMENTS
 } from '../constants'
 
 export function incrementActionCreator() {
@@ -79,6 +80,36 @@ export function loadArticle(id) {
         dispatch({
           type: LOAD_ARTICLE + FAIL,
           payload: { id },
+          error: e
+        })
+      )
+  }
+}
+
+export function loadAllComments(page) {
+  const limit = 5
+  const offset = page * limit
+
+  return function(dispatch) {
+    dispatch({
+      type: LOAD_ALL_COMMENTS + START,
+      payload: page
+    })
+
+    fetch(`/api/comment?limit=${limit}&offset=${offset}`)
+      .then((res) => res.json())
+      .then((response) => {
+        dispatch({
+          payload: {
+            page,
+            response
+          },
+          type: LOAD_ALL_COMMENTS + SUCCESS
+        })
+      })
+      .catch((e) =>
+        dispatch({
+          type: LOAD_ALL_COMMENTS + FAIL,
           error: e
         })
       )
