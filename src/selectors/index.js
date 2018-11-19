@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect'
-import { debug } from 'util'
 import { List } from 'immutable'
 
 export const filtersSelector = (state) => state.filters
@@ -47,8 +46,8 @@ export const articleSelector = createSelector(
 )
 
 export const pageSelector = (state, currentPage) => {
-  const paging = state.commentsPage
-  const pages = paging.pages
+  const pagedComments = state.pagedComments
+  const pages = pagedComments.pages
   if (!pages.has(currentPage)) {
     return new List()
   }
@@ -57,8 +56,16 @@ export const pageSelector = (state, currentPage) => {
   return page
 }
 
-export const isPageLoaded = (state, currentPage) => {
-  const paging = state.commentsPage
-  const pages = paging.pages
+export const commentPageLoadedSelector = (state, currentPage) => {
+  const pagedComments = state.pagedComments
+  const pages = pagedComments.pages
   return pages.has(currentPage)
+}
+
+export const commentPageLoadingSelector = (state) => {
+  return state.pagedComments.loading
+}
+
+export const totalCommentCountSelector = (state) => {
+  return state.pagedComments.totalCommentCount
 }

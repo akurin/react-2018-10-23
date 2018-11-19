@@ -2,9 +2,14 @@ import React, { Component } from 'react'
 import toggleOpenItem from '../../decorators/toggleOpen'
 import { connect } from 'react-redux'
 import Loader from '../common/loader'
-import { loadAllComments } from '../../ac'
+import { loadComments } from '../../ac'
 import { NavLink } from 'react-router-dom'
-import { pageSelector, isPageLoaded } from '../../selectors'
+import {
+  pageSelector,
+  commentPageLoadedSelector,
+  commentPageLoadingSelector,
+  totalCommentCountSelector
+} from '../../selectors'
 
 const commentsPerPage = 5
 
@@ -19,12 +24,12 @@ class AllComments extends Component {
 
   loadCommentsIfNeeded() {
     !this.props.isPageLoaded &&
-      !this.props.commentsPage.loading &&
-      this.props.loadAllComments(this.props.page)
+      !this.props.isPageLoading &&
+      this.props.loadComments(this.props.page)
   }
 
   render() {
-    if (this.props.commentsPage.loading) {
+    if (this.props.isPageLoading) {
       return <Loader />
     }
 
@@ -39,7 +44,7 @@ class AllComments extends Component {
   }
 
   renderComments() {
-    return this.props.currentPageComments.map(this.renderComment)
+    return this.props.comments.map(this.renderComment)
   }
 
   renderComment(comment) {
@@ -52,8 +57,7 @@ class AllComments extends Component {
   }
 
   renderPager() {
-    const pageNumber =
-      this.props.commentsPage.totalCommentCount / commentsPerPage
+    const pageNumber = this.props.totalCommentCount / commentsPerPage
 
     const pageNumbers = []
     for (let page = 0; page < pageNumber; page++) {
@@ -78,13 +82,14 @@ class AllComments extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    commentsPage: state.commentsPage,
-    currentPageComments: pageSelector(state, ownProps.page),
-    isPageLoaded: isPageLoaded(state, ownProps.page)
+    comments: pageSelector(state, ownProps.page),
+    isPageLoading: commentPageLoadingSelector(state),
+    isPageLoaded: commentPageLoadedSelector(state, ownProps.page),
+    totalCommentCount: totalCommentCountSelector(state)
   }
 }
 
 export default connect(
   mapStateToProps,
-  { loadAllComments }
+  { loadComments }
 )(toggleOpenItem(AllComments))

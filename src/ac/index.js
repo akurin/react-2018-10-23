@@ -86,7 +86,7 @@ export function loadArticle(id) {
   }
 }
 
-export function loadAllComments(page) {
+export function loadComments(page) {
   const limit = 5
   const offset = page * limit
 

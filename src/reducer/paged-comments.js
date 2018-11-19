@@ -1,5 +1,5 @@
 import { LOAD_ALL_COMMENTS, SUCCESS, FAIL, START } from '../constants'
-import { Map, Record, OrderedMap, List } from 'immutable'
+import { Map, Record } from 'immutable'
 
 const CommentRecord = Record({
   id: null,
@@ -9,6 +9,7 @@ const CommentRecord = Record({
 
 const ReducerRecord = Record({
   loading: false,
+  commentsPerPage: 5,
   totalCommentCount: 0,
   pages: new Map()
 })
@@ -29,8 +30,8 @@ export default (state = new ReducerRecord(), action) => {
           )
         )
 
-    // case LOAD_ALL_COMMENTS + FAIL:
-    // return state.set('loading', false).set('loadingError', action.payload.error)
+    case LOAD_ALL_COMMENTS + FAIL:
+      return state.set('loading', false)
 
     default:
       return state
